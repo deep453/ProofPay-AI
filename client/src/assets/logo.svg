@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" fill="none">
+  <defs>
+    <linearGradient id="logoBgGrad" x1="2" y1="4" x2="42" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#1E3A8A" />
+    </linearGradient>
+  </defs>
+  <!-- Icon -->
+  <rect x="2" y="4" width="40" height="40" rx="12" fill="url(#logoBgGrad)"/>
+  <path d="M14 13H24C27.5 13 30 15.5 30 19C30 22.5 27.5 25 24 25H19V31H14V13Z" fill="white"/>
+  <path d="M19 17.5H23.5C24.8 17.5 25.5 18.2 25.5 19C25.5 19.8 24.8 20.5 23.5 20.5H19V17.5Z" fill="#1E3A8A"/>
+  <circle cx="32" cy="30" r="7" fill="#10B981"/>
+  <path d="M29.8 30L31.5 31.7L34.5 28.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Text -->
+  <text x="52" y="28" font-family="Inter, system-ui, sans-serif" font-size="20" font-weight="700" fill="#0F172A" letter-spacing="-0.5">Proof<tspan fill="#2563EB">Pay</tspan></text>
+  <!-- Badge -->
+  <rect x="145" y="16" width="48" height="18" rx="5" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1"/>
+  <text x="151" y="29" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#2563EB" letter-spacing="0.2">AGENT</text>
+</svg>

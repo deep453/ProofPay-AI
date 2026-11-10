@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="ppGrad" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#1E3A8A" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="16" y1="12" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="14" fill="url(#ppGrad)"/>
+  <!-- P shape with verification shield & check -->
+  <path d="M15 13H27C31.4183 13 35 16.5817 35 21C35 25.4183 31.4183 29 27 29H21V35H15V13Z" fill="white" fill-opacity="0.95"/>
+  <path d="M21 19H26.5C27.8807 19 29 20.1193 29 21.5C29 22.8807 27.8807 24 26.5 24H21V19Z" fill="#1E3A8A"/>
+  <!-- AI Agent Sparkle / Check -->
+  <circle cx="34" cy="33" r="8" fill="#10B981"/>
+  <path d="M31.5 33L33.5 35L37 31" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

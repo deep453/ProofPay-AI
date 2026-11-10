@@ -1,0 +1,22 @@
+node_modules/
+.env
+.env.*
+!.env.example
+
+dist/
+build/
+coverage/
+
+*.log
+*.bak
+*.backup
+*.backup-*
+*.tmp
+
+frontend_backend_audit.txt
+frontend_live_audit.txt
+invoice_frontend_inspection.txt
+
+# Local database maintenance scripts
+scripts/fixMilestoneRepo.js
+scripts/resetDeveloperPassword.js
