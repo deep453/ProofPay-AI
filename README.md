@@ -914,12 +914,14 @@ ProofPay-AI/
 │
 ├── scripts/
 │   ├── testEvidenceCollector.js
-│   └── testEvidenceReport.js
+│   ├── testEvidenceReport.js
+│   └── testGeminiEvidenceReport.js
 │
 ├── services/
 │   ├── dockerTestRunner.js
 │   ├── evidenceCollector.js
 │   ├── evidenceReportService.js
+│   ├── geminiEvidenceService.js
 │   ├── githubArchiveService.js
 │   ├── githubService.js
 │   ├── milestoneState.js
@@ -944,6 +946,7 @@ ProofPay-AI/
 | `services/githubService.js` | GitHub API communication |
 | `services/evidenceCollector.js` | Repository evidence collection |
 | `services/evidenceReportService.js` | Evidence report construction |
+| `services/geminiEvidenceService.js` | Gemini-powered criterion-based evidence analysis |
 | `services/milestoneState.js` | Milestone state transition logic |
 | `services/paypalService.js` | PayPal OAuth, invoicing, invoice retrieval, webhook verification |
 | `services/dockerTestRunner.js` | Docker-based Vitest execution utility |
@@ -1004,6 +1007,7 @@ ProofPay-AI/
 | PayPal Invoicing API | Invoice creation and delivery |
 | PayPal Webhooks | Payment event notifications |
 | Docker | Isolated test execution utility |
+| Google Gemini API | Criterion-based analysis of collected GitHub evidence |
 
 ---
 
@@ -1028,6 +1032,9 @@ All authenticated endpoints require a valid JWT unless otherwise noted.
 | POST | `/api/milestones` | Create milestone | Yes, client role |
 | GET | `/api/milestones` | Retrieve user's milestones | Yes |
 | POST | `/api/milestones/:id/verify` | Trigger GitHub evidence verification | Yes, assigned developer |
+| PATCH | `/api/milestones/:id/action` | Perform a permitted milestone state transition | Yes, role and ownership checked |
+| GET | `/api/milestones/:id/invoice` | Retrieve milestone invoice details | Yes |
+| POST | `/api/milestones/:id/invoice` | Create and send a PayPal invoice | Yes, authorized milestone participant |
 
 ### Developers
 
@@ -1155,7 +1162,7 @@ The backend requires configuration for:
 
 | Variable | Purpose |
 |---|---|
-| MongoDB connection variable | MongoDB connection string; use the exact name read by the database connection code |
+| `MONGODB_URI` | MongoDB connection string |
 | `JWT_SECRET` | Secret used to sign authentication tokens |
 | `PAYPAL_CLIENT_ID` | PayPal application client ID |
 | `PAYPAL_CLIENT_SECRET` | PayPal application secret |
@@ -1164,8 +1171,11 @@ The backend requires configuration for:
 | `PAYPAL_INVOICER_NAME` | Optional invoice sender display name |
 | `PAYPAL_ENV` | Selects `sandbox` or `live` PayPal API environment |
 | `GITHUB_TOKEN` | Optional GitHub API token for authenticated requests |
+| `GEMINI_API_KEY` | Google Gemini API key used by the evidence analysis service |
+| `GEMINI_MODEL` | Gemini model identifier; currently configured as `gemini-3.5-flash-lite` |
+| `PORT` | Backend server port; defaults to `3000` |
 
-The database connection variable and server port should be checked against the actual backend configuration before deployment.
+Keep backend credentials in the root `.env` file. Never expose these values through frontend environment variables.
 
 ### Frontend configuration
 
@@ -1259,6 +1269,7 @@ The repository includes:
 ```text
 scripts/testEvidenceCollector.js
 scripts/testEvidenceReport.js
+scripts/testGeminiEvidenceReport.js
 test-evidence.js
 ```
 
@@ -1371,8 +1382,8 @@ ProofPay is designed to be extensible. The following improvements would strength
 
 ### Evidence verification improvements
 
-- Integrate an LLM-based reasoning layer for richer criterion analysis.
-- Add semantic code understanding rather than relying primarily on keyword relevance.
+- Improve the existing Gemini-based criterion analysis with deeper semantic code understanding.
+
 - Support additional Git providers.
 - Add test-result ingestion and stronger behavioral validation.
 - Improve evidence provenance and confidence explanations.
@@ -1443,7 +1454,7 @@ git push origin feature/your-feature
 
 ## 23. License
 
-This repository currently declares the ISC license in its package metadata. For clear reuse permissions, add a root-level `LICENSE` file containing the intended license text.
+This project is licensed under the ISC License. See the root-level `LICENSE` file for the complete license text.
 
 ---
 

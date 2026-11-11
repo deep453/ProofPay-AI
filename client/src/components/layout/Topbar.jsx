@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useNotifications } from '../../hooks/useNotifications';
 import RoleSwitcher from './RoleSwitcher';
+import { USE_MOCK_DATA } from '../../services/api';
 import {
   Menu,
   Search,
@@ -73,8 +74,8 @@ export default function Topbar({ onToggleMobileMenu, onOpenAIChat }) {
 
       {/* Right Area: Role Switcher, AI Button, Notification Bell, User */}
       <div className="flex items-center gap-2.5 sm:gap-3.5">
-        {/* Role Switcher */}
-        <RoleSwitcher />
+        {/* Role Switcher: demo mode only */}
+        {USE_MOCK_DATA && <RoleSwitcher />}
 
         {/* AI Assistant Quick Pill */}
         <button

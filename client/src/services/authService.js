@@ -53,8 +53,10 @@ export const authService = {
       };
     }
 
-    const response = await apiClient.post('/auth/register', userData);
-    return response.data;
+    await apiClient.post('/auth/register', userData);
+
+    // Registration does not issue a JWT, so log in immediately.
+    return await authService.login(userData.email, userData.password);
   },
 
   getCurrentUser() {

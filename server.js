@@ -1,4 +1,4 @@
-﻿const bcrypt = require("bcryptjs");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("./models/User");
 const authenticate = require("./middleware/authenticate");
@@ -16,6 +16,9 @@ const WebhookEvent = require("./models/WebhookEvent");
 const { getNextStatus } = require("./services/milestoneState");
 const { collectGitHubEvidence } = require("./services/evidenceCollector");
 const { buildEvidenceReport } = require("./services/evidenceReportService");
+const {
+  buildGeminiEvidenceReport
+} = require("./services/geminiEvidenceService");
 const {
   createInvoice,
   sendInvoice,
@@ -980,13 +983,16 @@ app.post("/api/milestones/:id/verify", authenticate, async (req, res) => {
   milestone.acceptanceCriteria
 );
 
-    const report = buildEvidenceReport(
-      milestone,
-      collectedEvidence
-    );
+    const report = await buildGeminiEvidenceReport(
+  milestone,
+  collectedEvidence
+);
 
     milestone.evidenceReport = report;
-    milestone.status = "evidence_ready";
+    milestone.status = getNextStatus(
+      milestone.status,
+      "evidence_ready"
+    );
 
     await milestone.save();
 
@@ -1384,10 +1390,3 @@ startServer().catch(error => {
   console.error("Server startup failed:", error.message);
   process.exit(1);
 });
-
-
-
-
-
-
-

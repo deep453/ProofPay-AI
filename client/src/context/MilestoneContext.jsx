@@ -3,19 +3,27 @@ import { milestoneService } from '../services/milestoneService';
 import { useNotifications } from '../hooks/useNotifications';
 
 import { MilestoneContext } from './MilestoneContextValue';
+import { useAuth } from '../hooks/useAuth';
 
 export function MilestoneProvider({ children }) {
   const [milestones, setMilestones] = useState([]);
+  const [loadedUserId, setLoadedUserId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { addToast } = useNotifications();
+  const { isAuthenticated, user } = useAuth();
 
-  const loadMilestones = useCallback(async () => {
+  const loadMilestones = useCallback(async (isActive = () => true) => {
     try {
       const data = await milestoneService.getMilestones();
+      if (!isActive()) return;
       setMilestones(data);
+      setLoadedUserId(user?.id ?? null);
       setError(null);
     } catch (err) {
+      if (!isActive()) return;
+      setMilestones([]);
+      setLoadedUserId(user?.id ?? null);
       setError(err.message || 'Failed to load milestones');
       addToast({
         title: 'Error loading milestones',
@@ -23,28 +31,25 @@ export function MilestoneProvider({ children }) {
         type: 'error'
       });
     } finally {
-      setLoading(false);
+      if (isActive()) setLoading(false);
     }
-  }, [addToast]);
+  }, [addToast, user]);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     let active = true;
-    milestoneService.getMilestones().then((data) => {
+
+    Promise.resolve().then(() => {
       if (active) {
-        setMilestones(data);
-        setLoading(false);
-      }
-    }).catch((err) => {
-      if (active) {
-        setError(err.message);
-        setLoading(false);
+        return loadMilestones(() => active);
       }
     });
 
     return () => {
       active = false;
     };
-  }, []);
+  }, [isAuthenticated, user?.id, loadMilestones]);
 
   const createMilestone = async (milestoneData) => {
     setLoading(true);
@@ -150,18 +155,19 @@ export function MilestoneProvider({ children }) {
     });
   };
 
+  const visibleMilestones = useMemo(() => isAuthenticated && loadedUserId === user?.id ? milestones : [], [isAuthenticated, loadedUserId, user?.id, milestones]);
   const stats = useMemo(() => {
-    const totalMilestones = milestones.length;
-    const activeMilestones = milestones.filter((m) =>
+    const totalMilestones = visibleMilestones.length;
+    const activeMilestones = visibleMilestones.filter((m) =>
       ['draft', 'verifying', 'evidence_ready', 'awaiting_client_approval', 'approved_for_invoice', 'invoice_sent'].includes(m.status)
     ).length;
-    const pendingApprovals = milestones.filter((m) => m.status === 'awaiting_client_approval').length;
-    const invoicesSent = milestones.filter((m) => m.status === 'invoice_sent').length;
-    const paidMilestones = milestones.filter((m) => m.status === 'paid');
+    const pendingApprovals = visibleMilestones.filter((m) => m.status === 'awaiting_client_approval').length;
+    const invoicesSent = visibleMilestones.filter((m) => m.status === 'invoice_sent').length;
+    const paidMilestones = visibleMilestones.filter((m) => m.status === 'paid');
     const paymentsReceived = paidMilestones.length;
     const totalAmountPaid = paidMilestones.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
-    const awaitingVerification = milestones.filter((m) => m.status === 'verifying').length;
-    const needsRevisionCount = milestones.filter((m) => m.status === 'needs_revision').length;
+    const awaitingVerification = visibleMilestones.filter((m) => m.status === 'verifying').length;
+    const needsRevisionCount = visibleMilestones.filter((m) => m.status === 'needs_revision').length;
 
     return {
       totalMilestones,
@@ -174,13 +180,16 @@ export function MilestoneProvider({ children }) {
       needsRevisionCount,
       totalEarned: totalAmountPaid
     };
-  }, [milestones]);
+  }, [visibleMilestones]);
 
   const value = {
-    milestones,
-    loading,
+    milestones: visibleMilestones,
+    loading: isAuthenticated && (loading || loadedUserId !== user?.id),
     error,
-    refreshMilestones: loadMilestones,
+    refreshMilestones: async () => {
+      setLoading(true);
+      await loadMilestones();
+    },
     createMilestone,
     triggerVerification,
     performAction,

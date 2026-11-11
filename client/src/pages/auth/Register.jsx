@@ -36,8 +36,8 @@ export default function Register() {
       return;
     }
 
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+    if (password.length < 12) {
+      setError('Password must be at least 12 characters');
       return;
     }
 
@@ -116,7 +116,7 @@ export default function Register() {
         </div>
 
         <div className="relative z-10 pt-6 border-t border-blue-900/40 text-2xs text-slate-400">
-          ProofPay Agent 2.0 • Fintech SaaS Architecture
+          ProofPay Agent 2.0 â€¢ Fintech SaaS Architecture
         </div>
       </div>
 
@@ -200,9 +200,11 @@ export default function Register() {
             <Input
               label="Password"
               type="password"
+              minLength={12}
+              maxLength={72}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 8 characters"
+              placeholder="12–72 characters"
               icon={Lock}
               required
             />

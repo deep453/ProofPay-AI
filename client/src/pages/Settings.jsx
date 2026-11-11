@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useMilestones } from '../hooks/useMilestones';
 import { useNotifications } from '../hooks/useNotifications';
+import { USE_MOCK_DATA } from '../services/api';
 import PageHeader from '../components/layout/PageHeader';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
@@ -52,8 +53,8 @@ export default function Settings() {
       setNewPassword('');
       setConfirmNewPassword('');
       addToast({
-        title: 'Security Updated',
-        message: 'Account password changed successfully.',
+        title: 'Demo Simulation',
+        message: 'Demo only: password change simulated; no account password was changed.',
         type: 'success'
       });
     }, 600);
@@ -98,6 +99,7 @@ export default function Settings() {
           <span>Security & Authentication</span>
         </button>
 
+        {USE_MOCK_DATA && (
         <button
           type="button"
           onClick={() => setActiveTab('demo')}
@@ -110,6 +112,7 @@ export default function Settings() {
           <RotateCcw className="w-4 h-4" />
           <span>Hackathon Demo Controls</span>
         </button>
+        )}
       </div>
 
       {/* Tab: Integrations */}
@@ -193,12 +196,21 @@ export default function Settings() {
         </div>
       )}
 
+      {activeTab === 'security' && !USE_MOCK_DATA && (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 space-y-2">
+          <h3 className="text-sm font-bold text-slate-900">Password changes unavailable</h3>
+          <p className="text-xs text-slate-600">
+            The backend does not currently provide a password-change endpoint.
+            No password has been changed. Registration and sign-in are available.
+          </p>
+        </div>
+      )}
       {/* Tab: Security */}
-      {activeTab === 'security' && (
+      {activeTab === 'security' && USE_MOCK_DATA && (
         <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xs space-y-5">
           <div className="border-b border-slate-100 pb-3">
             <h3 className="text-sm font-bold text-slate-900">Password & Session Hardening</h3>
-            <p className="text-xs text-slate-500">Update your account password with bcrypt salt factor 12.</p>
+            <p className="text-xs text-slate-500">Demo-only form: password changes are simulated and are not saved.</p>
           </div>
 
           <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md">
@@ -207,7 +219,7 @@ export default function Settings() {
               type="password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder="••••••••••••"
+              placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
               icon={Lock}
               required
             />
@@ -240,7 +252,7 @@ export default function Settings() {
       )}
 
       {/* Tab: Demo Controls */}
-      {activeTab === 'demo' && (
+      {USE_MOCK_DATA && activeTab === 'demo' && (
         <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-2xs space-y-5">
           <div className="border-b border-slate-100 pb-3">
             <h3 className="text-sm font-bold text-slate-900">Hackathon Demonstration Utilities</h3>
